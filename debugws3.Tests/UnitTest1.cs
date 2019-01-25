@@ -52,5 +52,17 @@ namespace Tests
       var result = Calc.Calculate(value);
       Assert.IsTrue(result.result == 1, $"{value} should be 1");
     }
-  }
+
+    [DataTestMethod]
+    [DataRow("3+ 3/3")]
+    [DataRow("3+2/ 2")]
+    [DataRow(" 3+4 / 4 ")]
+    [DataRow("3+10/     10")]
+    [DataRow("  3+  6/6")]
+    public void DoDivide(string value)
+    {
+        var result = Calc.Calculate(value);
+        Assert.IsTrue(result.result == 4, $"{value} should be 4");
+    }
+    }
 }

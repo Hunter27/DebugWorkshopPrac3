@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -64,26 +65,90 @@ namespace debugws3
       return true;
     }
 
+    public static (int[] , char[]) Bondmath (string input)
+        {
+            var numArray = Regex.Matches(input, "[0-9]+").Cast<Match>().Select(m => m.Value).ToArray();
+            var opArray = Regex.Matches(input, @"[+-\/*]").Cast<Match>().Select(m => m.Value).ToArray();
+
+            //Casting Arrays to the correct data type
+            int[] numbersToBeCalculated = Array.ConvertAll(numArray, int.Parse);
+            char[] operations = Array.ConvertAll(opArray, char.Parse);
+            List<int> nums = new List<int>();
+            List<char> ops = new List<char>();
+
+            for (int i = 0; i < operations.Length+1; i++)
+            {
+                if (i> operations.Length-1)
+                {
+                    nums.Add(numbersToBeCalculated[i]);
+                }
+                else
+                {
+                    if (operations[i] == '/' || operations[i] == '*')
+                    {
+                        switch (operations[i])
+                        {
+                            case '/':
+                                {
+                                    int num = numbersToBeCalculated[i] / numbersToBeCalculated[i + 1];
+                                    nums.Add(num);
+                                    i += 2;
+                                    break;
+                                }
+                            case '*':
+                                {
+                                    int num = numbersToBeCalculated[i] * numbersToBeCalculated[i + 1];
+                                    nums.Add(num);
+                                    i += 2;
+                                    break;
+                                }
+                        }
+                    }
+                    else
+                    {
+                        nums.Add(numbersToBeCalculated[i]);
+                        ops.Add(operations[i]);
+                    }
+                }
+          
+            }
+            return (nums.ToArray(),ops.ToArray());
+        }
+
     public static Result Calculate(string input)
     {
-      if (input == null)
-      {
-        return new Result(0, "Wrong entry. Try again using one or more operations");
-      }
+            if (input == null)
+            {
+                return new Result(0, "Wrong entry. Try again using one or more operations");
+            }
+            var numArray = Regex.Matches(input, "[0-9]+").Cast<Match>().Select(m => m.Value).ToArray();
+        var opArray = Regex.Matches(input, @"[+-\/*]").Cast<Match>().Select(m => m.Value).ToArray();
 
-      //Getting numbers and math operators using Regex
-      var numArray = Regex.Matches(input, "[0-9]+").Cast<Match>().Select(m => m.Value).ToArray();
-      var opArray = Regex.Matches(input, @"[+-\/*]").Cast<Match>().Select(m => m.Value).ToArray();
+        //Casting Arrays to the correct data type
+        int[] numbers = Array.ConvertAll(numArray, int.Parse);
+        char[] ope = Array.ConvertAll(opArray, char.Parse);
+        if (ope.Length >= numbers.Length)
+        {
+            return new Result(0, "Wrong entry. Try again using one or more operations");
+        }
 
-      //Casting Arrays to the correct data type
-      int[] numbersToBeCalculated = Array.ConvertAll(numArray, int.Parse);
-      char[] operations = Array.ConvertAll(opArray, char.Parse);
+       (int[] numbersToBeCalculated, char[] operations) =  Bondmath(input);
+       for (var i = 0; i < numbersToBeCalculated.Length; i++)
+            {
+                Console.WriteLine(numbersToBeCalculated[i]);
+            }
+        for (var i = 0; i < operations.Length; i++)
+        {
+            Console.WriteLine(operations[i]);
+        }
 
-      //Checking if math operators are equal or more than the numbers to be calculated
-      if (operations.Length >= numbersToBeCalculated.Length)
-      {
-        return new Result(0, "Wrong entry. Try again using one or more operations");
-      }
+
+
+            //Casting Arrays to the correct data type
+
+
+            //Checking if math operators are equal or more than the numbers to be calculated
+
 
       double result = numbersToBeCalculated[0];
 
